@@ -16,7 +16,7 @@ expected_headers = ['Email', 'CC email (assistant or other colleague)', 'Mobile 
                     'Dietary Restrictions/Allergies (for in-person judging)', 'Are you interested in any of the following?', 
                     'Conversion Date', 'Conversion Page', 'Conversion Title', 'Contact first name', 'Contact last name', 'Contact email', 'Contact ID']
 
-
+#Ensure that all headers are present - making sure that the correct file is being loaded
 if judges.columns.to_list() != expected_headers:
     print("This dataset does not contain the required headers.\nPlease ensure that you have placed the correct file in data-in/judges.csv")  
 
@@ -30,11 +30,15 @@ if judges.columns.to_list() != expected_headers:
         error_message += f"  - Unexpected headers: {extra_headers}\n"
     raise ValueError(error_message)
 
+#Drop any duplicates if present - likely not but just in case as this data is collected by hand
+judges.drop_duplicates()
 
+#Ensure every row has the data that we're going to be using. 
 required_columns = ['Email', 'First name', 'Last name', 'Job title', 'Company name', 'Preferred Pronouns', 'Ethnic Group']
 
 missing_data = judges[required_columns].isnull()
 rows_with_missing_data = missing_data.any(axis=1)
+
 
 if rows_with_missing_data.any():
     # Get rows with missing data and their indices
@@ -44,3 +48,4 @@ if rows_with_missing_data.any():
         f"{problematic_rows}"
     )
 
+print(judges['Years of Experience'].unique())
