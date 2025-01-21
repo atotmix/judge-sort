@@ -29,3 +29,18 @@ if judges.columns.to_list() != expected_headers:
     if extra_headers:
         error_message += f"  - Unexpected headers: {extra_headers}\n"
     raise ValueError(error_message)
+
+
+required_columns = ['Email', 'First name', 'Last name', 'Job title', 'Company name', 'Preferred Pronouns', 'Ethnic Group']
+
+missing_data = judges[required_columns].isnull()
+rows_with_missing_data = missing_data.any(axis=1)
+
+if rows_with_missing_data.any():
+    # Get rows with missing data and their indices
+    problematic_rows = judges[rows_with_missing_data]
+    raise ValueError(
+        f"Validation failed! The following rows have missing data in required columns:\n"
+        f"{problematic_rows}"
+    )
+
