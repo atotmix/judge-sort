@@ -51,6 +51,7 @@ if rows_with_missing_data.any():
     )
 
 
+
 def distribute_teams(df, group_cols, n_groups):
     """
     Distributes individuals in a DataFrame into groups by first evenly distributing underrepresented groups
@@ -105,7 +106,10 @@ def distribute_teams(df, group_cols, n_groups):
 
 diversity_columns = ['Preferred Pronouns', 'Ethnic Group', 'Years of Experience']
 
-teams = distribute_teams(judges,diversity_columns, len(judges) // 11 + 1)
 
-for i, team in enumerate(teams):
-    team.to_csv(f'data-out/team_{i}.csv', index=False)
+for judging_day, group_df in judges.groupby('First choice for judging'):
+    team_list = distribute_teams(group_df,diversity_columns, len(group_df) // 11 + 1)
+    
+    for i, team in enumerate(team_list):
+        team.to_csv(f'data-out/{judging_day} - team_{i}.csv', index=False)
+
