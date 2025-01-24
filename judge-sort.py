@@ -108,8 +108,12 @@ diversity_columns = ['Preferred Pronouns', 'Ethnic Group', 'Years of Experience'
 
 
 for judging_day, group_df in judges.groupby('First choice for judging'):
+    writer = pd.ExcelWriter(f'data-out/{judging_day}_groups.xlsx', engine='xlsxwriter')
+
     team_list = distribute_teams(group_df,diversity_columns, len(group_df) // 11 + 1)
     
     for i, team in enumerate(team_list):
-        team.to_csv(f'data-out/{judging_day} - team_{i}.csv', index=False)
+        team.to_excel(writer, sheet_name=f'group {i}')
+        
+    writer.close()
 
