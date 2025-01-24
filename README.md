@@ -29,3 +29,12 @@ As I progress throughout the project I update each ticket, making it far easier 
 
 ### Test driven development
 Whilst writing some of the features for seperating out groups, I utilised test functions that allowed me to evaluate how equally groups were being distributed. This was quite helpful as it allowed me to quickly notice edge cases that weren't being handled. Most of this testing exists in `development.ipynb`.
+
+## Evaluation
+In its current state, the program does what I set out for it to do. However, there are improvements that can be made:
+
+- Matching groups with what to judge
+- giving more control over the balance of groups
+- Checking companies
+
+As this project is part of an assignment, all these future developments will be made in a seperate branch
