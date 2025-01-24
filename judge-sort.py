@@ -51,6 +51,7 @@ if rows_with_missing_data.any():
     )
 
 
+
 def distribute_teams(df, group_cols, n_groups):
     """
     Distributes individuals in a DataFrame into groups by first evenly distributing underrepresented groups
@@ -105,7 +106,45 @@ def distribute_teams(df, group_cols, n_groups):
 
 diversity_columns = ['Preferred Pronouns', 'Ethnic Group', 'Years of Experience']
 
-teams = distribute_teams(judges,diversity_columns, len(judges) // 11 + 1)
 
-for i, team in enumerate(teams):
-    team.to_csv(f'data-out/team_{i}.csv', index=False)
+
+for judging_day, group_df in judges.groupby('First choice for judging'):
+    writer = pd.ExcelWriter(f'data-out/{judging_day}_groups.xlsx', engine='xlsxwriter')
+    workbook = writer.book
+
+    team_list = distribute_teams(group_df,diversity_columns, len(group_df) // 11 + 1)
+    for i, team in enumerate(team_list):
+        sheet_title = f'group {i}'
+        team.to_excel(writer, sheet_name=sheet_title) 
+        sheet = writer.sheets[sheet_title]
+        for i, column in enumerate(diversity_columns):
+            frequency = team[column].value_counts().reset_index()
+            frequency.columns = [column, 'Count']
+            print(frequency)
+            # Write frequency data to the sheet
+            start_row = len(team) + 2
+            start_col = i*2
+            frequency.to_excel(writer, sheet_name=sheet_title, index=False, startrow=start_row,startcol=start_col)
+
+            #Create chart
+            chart = workbook.add_chart({'type': 'pie'})
+            chart.add_series({
+                'categories' : [sheet_title,start_row + 1, start_col, start_row + len(frequency), start_col],
+                'values'     : [sheet_title, start_row + 1, start_col + 1,  start_row + len(frequency),  start_col + 1],
+                'name'       : f'{column} Frequency'
+            })
+
+            chart.set_title({'name': column})
+            chart.set_style(10)
+            sheet.insert_chart('E2', chart)
+
+
+
+
+
+
+
+
+
+    writer.close()
+
