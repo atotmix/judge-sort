@@ -1,6 +1,5 @@
 # judge-sort
 
-
 `judge-sort` is a python script designed to make the sorting & grouping of judges easy based off a wide range of variables.
 
 ## Key features
@@ -10,6 +9,16 @@
 - Data Validation and Cleaning: Processes and validates input data to ensure accuracy and completeness before allocation.
 - Supports flexible team size configurations.
 - Exports team assignments and conflict summaries to Excel files for easy review.
+
+## How to use
+This tool is to be used with the output CSV of our google form. Once this form has been downloaded, it can be placed into a `data-in` folder next to the script. Once the script has completed, it will have output as many excel sheets as there are sessions. 
+
+To run this script you need to have python (tested with 3.12) installed and the modules in requirements installed. To do this, and run the program you can run the following commands:
+
+```bash
+pip install -r requirements.txt
+python3 judge-sort.py
+```
 
 ## Development
 Whilst developing this tool, I used github projects to create simple to understand tickets. I chose to use github projects as it very closely links with the rest of github, letting me track progress within pull requests / issues
