@@ -18,3 +18,5 @@ Whilst writing these tickets, I aimed to write them as cronologically as possibl
 
 As I progress throughout the project I update each ticket, making it far easier to track progress & understand what part of the program is next. 
 
+### Test driven development
+Whilst writing some of the features for seperating out groups, I utilised test functions that allowed me to evaluate how equally groups were being distributed. This was quite helpful as it allowed me to quickly notice edge cases that weren't being handled. Most of this testing exists in `development.ipynb`.
