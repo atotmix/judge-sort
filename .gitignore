@@ -170,5 +170,6 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-#data-in folder contains PII - don't want to upload this!
-data-in/
+#data-in / data-out folders contains PII - don't want to upload this!
+data-in/*
+data-out/*
