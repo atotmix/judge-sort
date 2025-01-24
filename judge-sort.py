@@ -3,6 +3,18 @@ from collections import defaultdict
 import numpy as np
 judges = pd.DataFrame
 
+
+#Variables: 
+
+#Columns that are required for this tool to function. 
+required_columns = ['Email', 'First name', 'Last name', 'Job title', 'Company name', 'Preferred Pronouns', 'Ethnic Group']
+
+#Columns that are used to create groups
+diversity_columns = ['Preferred Pronouns', 'Ethnic Group', 'Years of Experience']
+
+#Set the size of the teams - due to the way people are sorted the size will not exactly be this number but +- 1 is expected
+team_size = 11
+
 try:
     judges = pd.read_csv("data-in/judges.csv")
 except:
@@ -19,6 +31,7 @@ expected_headers = ['Email', 'CC email (assistant or other colleague)', 'Mobile 
                     'Conversion Date', 'Conversion Page', 'Conversion Title', 'Contact first name', 'Contact last name', 'Contact email', 'Contact ID']
 
 #Ensure that all headers are present - making sure that the correct file is being loaded
+
 if judges.columns.to_list() != expected_headers:
     print("This dataset does not contain the required headers.\nPlease ensure that you have placed the correct file in data-in/judges.csv")  
 
@@ -35,8 +48,6 @@ if judges.columns.to_list() != expected_headers:
 #Drop any duplicates if present - likely not but just in case as this data is collected by hand
 judges.drop_duplicates()
 
-#Ensure every row has the data that we're going to be using. 
-required_columns = ['Email', 'First name', 'Last name', 'Job title', 'Company name', 'Preferred Pronouns', 'Ethnic Group']
 
 missing_data = judges[required_columns].isnull()
 rows_with_missing_data = missing_data.any(axis=1)
@@ -103,24 +114,20 @@ def distribute_teams(df, group_cols, n_groups):
 
     return groups
 
-
-diversity_columns = ['Preferred Pronouns', 'Ethnic Group', 'Years of Experience']
-
-
-
 for judging_day, group_df in judges.groupby('First choice for judging'):
     writer = pd.ExcelWriter(f'data-out/{judging_day}_groups.xlsx', engine='xlsxwriter')
     workbook = writer.book
 
-    team_list = distribute_teams(group_df,diversity_columns, len(group_df) // 11 + 1)
+    team_list = distribute_teams(group_df,diversity_columns, len(group_df) // team_size + 1)
     for i, team in enumerate(team_list):
         sheet_title = f'group {i}'
         team.to_excel(writer, sheet_name=sheet_title) 
         sheet = writer.sheets[sheet_title]
         for i, column in enumerate(diversity_columns):
+            #Get occurences of each value in the column
             frequency = team[column].value_counts().reset_index()
             frequency.columns = [column, 'Count']
-            print(frequency)
+            
             # Write frequency data to the sheet
             start_row = len(team) + 2
             start_col = i*2
@@ -137,14 +144,6 @@ for judging_day, group_df in judges.groupby('First choice for judging'):
             chart.set_title({'name': column})
             chart.set_style(10)
             sheet.insert_chart('E2', chart)
-
-
-
-
-
-
-
-
 
     writer.close()
 
